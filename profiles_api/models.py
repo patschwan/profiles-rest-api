@@ -37,7 +37,7 @@ class UserProfileManager(BaseUserManager):
 
         return user
 
-
+# as best practise name the class singular -> Django Admin adds and s (FrontEnd)
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     """Database model for users in the system"""
     # email column in DB hinzufügen mit max_length und eindeutig
