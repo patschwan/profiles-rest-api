@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 # wir importieren BaseUserManager um User=email abzuleiten
 from django.contrib.auth.models import BaseUserManager
+# project proile feed
+from django.conf import settings # imports settings of the projects
 
 
 # wir nutzen BaseUserManager
@@ -66,3 +68,19 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     def ___str___(self):
         """return string representation of our user"""
         return self.email
+
+class ProfileFeedItem(models.Model):
+    """Profile status update"""
+    # Key PK -> FK für Profile und Feed DB Structure
+    user_profile = models.ForeignKey(
+        # best practise is to get it from the settings
+        # and not from the custom class UserProfile
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE # what if user profile is deleted
+    )
+    status_text = models.CharField(max_length=255)
+    created_on = models.DateTimeField(auto_now_add=True) # everytime new feed item is created, Date is set
+
+    def __str___(self):
+        """Return the model as a string"""
+        return self.status_text # converting to string should show the status_text

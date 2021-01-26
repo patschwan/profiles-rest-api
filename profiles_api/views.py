@@ -16,6 +16,12 @@ from rest_framework import filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings # because enabling Django Admin see renderer_classes
 
+# profile feed
+# from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
+# only auth users can access endpoints
+# plus change IsAuthenticatedOrReadOnly in the class UserFeed below
+
 class HelloAPIView(APIView):
     """Test API View"""
     # configure the defined serializers - name immer max_length=10
@@ -137,3 +143,26 @@ class UserLoginApiView(ObtainAuthToken):
     """handle creating user authentication tokens"""
     # not out of box in Django Admin
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    """Handle creating, reading and updating profile feed items"""
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.ProfileFeedItemSerializer
+    queryset = models.ProfileFeedItem.objects.all()
+    # only auth user can add/update new feeditems
+    # user can only update for their own id
+    permission_classes = (
+        permissions.UpdateOwnStatus,
+        # IsAuthenticatedOrReadOnly
+        IsAuthenticated
+    )
+
+    # Handy Django -> everytime we HTTP PUT this is performed
+    # enhance the standard behavior:
+    # ModelView always has a save function
+    # request.user is added when user is authenticated (e.g. by token)
+    # we add it to the request fields
+    def perform_create(self, serializer):
+        """Sets the user profile to the logged in user"""
+        serializer.save(user_profile=self.request.user)

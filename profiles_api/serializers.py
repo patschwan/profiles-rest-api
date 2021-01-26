@@ -29,7 +29,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         )
 
         return user
-        
+
     # otherwise updating user_profile will save PW as plain text
     def update(self, instance, validated_data):
         """Handle updating user account"""
@@ -41,3 +41,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         # pass value to existing DRF
         return super().update(instance, validated_data)
+
+
+class ProfileFeedItemSerializer(serializers.ModelSerializer):
+    """Serializes profile feed items"""
+
+    class Meta:
+        model = models.ProfileFeedItem
+        # Django Model by defaults adds an id to each obj
+        fields = ('id', 'user_profile', 'status_text', 'created_on')
+        # we only want to add feed items to THE authenticated user!
+        extra_kwargs = {'user_profile': {'read_only':True}}
