@@ -3,8 +3,13 @@ from rest_framework.response import Response
 # für Serializer (serializers.py)
 from rest_framework import status # list of HTTP Status Codes
 from profiles_api import serializers
+from profiles_api import models # import der models für Profiles Project (Chap 10)
 # für ViewSets
 from rest_framework import viewsets
+
+# permissions
+from rest_framework.authentication import TokenAuthentication
+from profiles_api import permissions
 
 
 class HelloAPIView(APIView):
@@ -106,3 +111,17 @@ class HelloViewSet(viewsets.ViewSet):
     def destroy(self, request, pk=None):
         """Handle removing an object"""
         return Response({'http_method': 'DELETE'})
+
+
+# Profile Projet Chap 10
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle creating and updating profiles"""
+    serializer_class = serializers.UserProfileSerializer
+    # query with objects to take effect
+    # Framework ModelViewSet takes care of list, etc...
+    queryset = models.UserProfile.objects.all()
+    # don't miss the comma to recieve a tuple not a single item
+    authentication_classes = (TokenAuthentication,)
+    # look up the permission logic for every call
+    # and again DON'T miss the comma!!
+    permission_classes = (permissions.UpdateOwnProfile,)

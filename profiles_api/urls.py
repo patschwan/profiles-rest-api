@@ -5,6 +5,9 @@ from profiles_api import views
 # ViewSets
 router = DefaultRouter()
 router.register('hello-viewset', views.HelloViewSet, base_name='hello-viewset')
+# Profiles Projekt
+# no base_name because we have the a queryset (just in case of overwrite)
+router.register('profile', views.UserProfileViewSet) 
 
 
 urlpatterns = [
