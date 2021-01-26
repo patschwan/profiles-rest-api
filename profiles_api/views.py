@@ -12,6 +12,9 @@ from rest_framework.authentication import TokenAuthentication
 from profiles_api import permissions
 from rest_framework import filters
 
+# token based authentication
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.settings import api_settings # because enabling Django Admin see renderer_classes
 
 class HelloAPIView(APIView):
     """Test API View"""
@@ -129,3 +132,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     # filter for elements
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name', 'email',)
+
+class UserLoginApiView(ObtainAuthToken):
+    """handle creating user authentication tokens"""
+    # not out of box in Django Admin
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
