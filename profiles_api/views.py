@@ -10,6 +10,7 @@ from rest_framework import viewsets
 # permissions
 from rest_framework.authentication import TokenAuthentication
 from profiles_api import permissions
+from rest_framework import filters
 
 
 class HelloAPIView(APIView):
@@ -125,3 +126,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     # look up the permission logic for every call
     # and again DON'T miss the comma!!
     permission_classes = (permissions.UpdateOwnProfile,)
+    # filter for elements
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name', 'email',)
